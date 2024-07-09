@@ -1,0 +1,76 @@
+Algorithm 1: PCB-iForest Working Principle
+Input: Sample xt, Sliding Window W, Anomaly Threshold s
+Output: Outlier score y
+Data: Ensemble E of Components C
+
+Begin
+1: Initialize the total score y to 0
+2: For each component i in the ensemble E:
+3:    Calculate the component score: score_C_i = ComponentScore(i)
+4:    Add score_C_i to the total score y
+5: End For
+6: Normalize the total score y by the size of the ensemble E
+
+// Updating PC values
+7: For each component i in the ensemble E:
+8:    If total ensemble score is greater than threshold s:
+9:        If component score is greater than threshold s:
+10:           Increment pc_i by 1
+11:       Else:
+12:           Decrement pc_i by 1
+13:   Else:
+14:       If component score is less than threshold s:
+15:           Increment pc_i by 1
+16:       Else:
+17:           Decrement pc_i by 1
+18: End For
+
+// Drift Detection and Partial Update
+19: Check for drift: drift_detected = NDKSWIN(W)
+20: If drift_detected is true:
+21:    For each component i in the ensemble E:
+22:        If pc_i is negative:
+23:            Delete the component Ci
+24:            Rebuild component Ci using window W
+25:            Reset pc_i to 0
+26:    End For
+27: End If
+28: Return the normalized total score y
+End
+
+
+
+
+
+#import pandas as pd
+#from sklearn.preprocessing import LabelEncoder
+#from sklearn.ensemble import IsolationForest
+
+# Load your dataset
+#data = pd.read_csv('path_to_your_file.csv')
+
+# Drop the first, second last, and last column
+#data = data.drop(data.columns[[0, -2, -1]], axis=1)
+
+# Initialize LabelEncoder
+#label_encoder = LabelEncoder()
+
+# Automatically detect and convert categorical columns
+#for column in data.columns:
+    #if data[column].dtype == 'object':  # Assuming object dtype implies categorical
+        #data[column] = label_encoder.fit_transform(data[column])
+
+# Initialize Isolation Forest
+#iso_forest = IsolationForest(n_estimators=100, contamination='auto', random_state=42)
+
+# Fit the model
+#iso_forest.fit(data)
+
+# Predict anomalies (-1 for outliers, 1 for inliers)
+#predictions = iso_forest.predict(data)
+
+# Add predictions to the DataFrame
+#data['anomaly'] = predictions
+
+# Display the results
+#print(data[['anomaly']].head())
